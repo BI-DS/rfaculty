@@ -578,6 +578,7 @@ Almost every non-trivial computation is done using loops, including addition of 
 
 ### Adding
 ```{r}
+#| output-location: column
 adder = 0
 for (i in seq(from = 1, to = 10)) {
   adder = adder + i
