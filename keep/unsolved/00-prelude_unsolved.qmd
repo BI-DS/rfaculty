@@ -1,0 +1,234 @@
+---
+title: "0: Prelude No. 1 in R major"
+subtitle: "R for faculty, Fall 2024"
+author: "Jonas Moss"
+format:
+  revealjs:
+    error: True
+    theme: [default, custom.scss]
+    width: 1600
+    height: 900
+    embed-resources: True
+    mainfont: "Verdana"
+    min-scale: 0.2
+    max-scale: 2
+    echo: true
+---
+## About the course
+
+`R` is a big topic.
+
+### Goal
+
+* Be able to do *some* things in `R` and *figure out how to do more*.
+* Gain some exposure to important programming ideas.
+
+## Rough goals
+1. Investigate objects, read documentation, and understand basic types.
+3. Some *real programming* with loops and conditionals.
+4. Load data, do some data manipulation.
+3. Establish good habits.
+4. Make some plots.
+5. Fit some models, carry out some tests.
+7. Some usage of `Quarto`, a technical publishing system could *can* write your papers in.
+
+## What we won't do (too much of)
+* Get into the nitty gritty.
+* Use precise computer science lingo.
+* Be comprehensive about `R` and its package ecosystem.
+* Do much "real programming".
+* Documentation and testing.
+* Open science practices.
+* Real use of `Quarto`.
+
+All of these are, of course, important. And worth learning.
+
+## About me
+
+* Mathematical statistician, PhD 2020 at University of Oslo.
+* Researching theoretical psychometrics, i.e., "measuring the mind".
+* Author of four published `R` packages.
+* Programmed in `R` for $\approx$ 10 years, programmed for 20 years.
+* Also programming in Rust, Python, and some C++ when needed.
+* Value `R` for what it is; I'm not a super-enthusiast. (There are many!)
+* I *do* enjoy programming for its own sake.
+
+## What are your goals?
+
+* Reproducible science?
+* Calculating power in mixed effects models?
+* Running structural equation models using `lavaan`?
+* Nothing in particular?
+* Just want to learn how to program?
+* Graphs?
+* Spontaneous data analysis?
+
+## What you need
+
+1. Install `R`, https://cloud.r-project.org/
+2. Install `RStudio`, https://posit.co/download/rstudio-desktop/
+
+## About `R`
+
+* Created in 1995 as an open source descendant of `S` (1976).
+* Maintained by the R Core Team.
+* "Made by statisticians, for statisticians."
+* Very easy to do easy things, quite hard to do hard things. Brittle.
+* Package manager called `CRAN`. Contains packages not made the R Core Team.
+* Hated by software engineers. Good for getting things done.
+* Popular, with an obscene amount of statistical packages.
+
+## Running code
+
+* Open RStudio and create a new **project** `rcourse`. (`File -> New project`).
+* Projects are needed for organization and, crucially, the *working directory*.
+* Paste the course files into the working directory.
+* We will always use projects, and I strongly suggest you do so too.
+* Make a new file `new.R` (CTRL+SHIFT+N).
+  * Write the line `(.packages())`, save the file (CTRL+S).
+  * Press CTRL+A to highlight all lines.
+  * Press CTRL+ENTER to run the highlighted lines.
+* Open `00-intro.qmd`. You can execute the code blocks using the "play" button.
+
+# Overview
+* This is an overview.
+* We'll cover most of this in more detail, so don't worry if you don't understand everything.
+
+## Packages
+
+The `.packages()` function returns all loaded packages. **Execute this.**
+```{r}
+(.packages())
+```
+
+* These are the automatically loaded packages. Several other packages are included in the `R` installation.
+
+* Look at the "package" tab in RStudio to see your installed packages.
+
+* What functions do `stats` contain? (No one knows all functions in every base package.)
+
+* In the *console*, type `stats::`. You should get a list of all *functions* (and more!) in the `stats` package along with some short documentation.
+
+## Documentation
+Find the long documentation as follows (run the code!):
+```{r}
+#| eval: False
+?PP.test
+```
+
+You can also write:
+
+```{r}
+#| eval: False
+?stats::PP.test()
+```
+
+## Installing packages
+
+We will make use of the `datarium` package. Install it using
+
+```{r}
+#| eval: False
+install.packages("datarium")
+```
+
+This function installs packages from `CRAN` ("crane", as in the bird), the official repository for `R` packages. 
+
+Find all data sets in the package using `datarium::` in the console.
+
+```{r}
+#| eval: False
+?datarium::anxiety
+```
+
+## Installing packages from Github
+Many packages are not on `CRAN`. They are usually on *Github*.
+
+```{r}
+#| eval: False
+install.packages("remotes")
+```
+
+Let's install `univariateML`, a package for univariate density estimation.
+
+```{r}
+#| eval: False
+remotes::install_github("JonasMoss/univariateML")
+```
+## Using installed packages
+
+The *assigment operator* `<-` (or `=`) assigns a value to a *variable*.
+```{r}
+anxiety <- datarium::anxiety
+head(anxiety)
+```
+`anxiety` is *data frame*. Access its columns with `$`:
+
+```{r}
+anxiety$t1
+```
+
+## Using installed packages
+
+Access a function from an installed package using `::`.
+```{r}
+object <- univariateML::mlnorm(anxiety$t1)
+```
+
+```{r}
+object
+```
+Here the object is *printed*. 
+
+Or using `library`. You'll often use this, but it's often better to use `::`.
+
+```{r}
+library("univariateML")
+object <- mlnorm(anxiety$t1)
+object
+```
+
+## Navigating a library
+
+Again, use `univariateML::`. Some libraries have a help file directly available.
+
+```{r}
+#| eval: False
+?univariateML
+```
+
+## Plotting
+In the documentation we see that `univariateML` supports plots. Let's try it.
+
+```{r}
+#| fig-align: center
+plot(obj)
+```
+
+`plot` is a *generic function*, i.e., a function that may work in different ways depending on the arguments you supply it.
+
+## More plotting
+
+Plots can be added on top of each other using `lines`. More on this later.
+```{r}
+hist(anxiety$t1, freq = FALSE)
+lines(obj)
+```
+
+## Quarto
+* We will use `.R` files and `.qmd` files.
+* `qmd` files are *Quarto* files, a system for technical publishing.
+* `qmd` files are split into text and program blocks. They can be compiled or "played".
+* You're likely to use both, but most of our course will use `qmd` files because we will mix text and code liberally.
+
+Try it out yourself.
+1. Open this file in RStudio (`00-intro.qmd`) and press "Render".
+2. "Play" the first few code blocks.
+
+## Summary
+1. `R` is a programming language for statistics. Disliked by software engineers.
+2. Use RStudio and the *projects* in RStudio.
+3. `.R` files are scripts, containing only code; `.qmd` files contain text and code.
+3. Investigate libraries using `::` in the console and use `?func` for help.
+4. Install external packages with `install.packages` or `remotes::install_github`.
+5. We'll use Quarto files from now on; probably no pretty presentations!

@@ -1,0 +1,357 @@
+---
+title: "7: Data frames and linear regression"
+subtitle: "R for faculty, Fall 2024"
+author: "Jonas Moss"
+format:
+  revealjs:
+    error: True
+    theme: [default, custom.scss]
+    width: 1600
+    height: 900
+    embed-resources: True
+    mainfont: "Verdana"
+    #min-scale: 0.2
+    #max-scale: 2
+    echo: True
+    auto-stretch: False
+---
+
+# Data frames
+
+## Data frames
+
+:::{.panel-tabset}
+
+### Info
+A *data frame* is like an Excel sheet. Used for tabular data.
+
+```{r}
+head(mtcars)
+```
+
+```{r}
+class(mtcars)
+```
+
+
+### Information
+A data frame is, more or less, a list whose named elements are vectors of the same length.
+
+```{r}
+dim(mtcars)
+```
+
+There are `32` rows and `12` columns.
+
+### Access
+Access a vector with `$`:
+```{r}
+mtcars$mpg
+```
+
+Or by double square brackets:
+
+```{r}
+mtcars[["mpg"]]
+```
+
+Using single squared brackets return a data frame!
+
+```{r}
+mtcars["mpg"]
+```
+
+### Subframes
+Extract subframes using lists:
+
+```{r}
+mtcars[c("mpg", "wt", "cyl")]
+```
+
+### Assignment
+You can assign vectors in the intuitive way:
+
+```{r}
+mtnew <- mtcars
+mtnew$x <- 2*mtcars$cyl + mtcars$mpg
+```
+
+Data frames are *not* arrays, but can often by converted to them:
+
+```{r}
+as.matrix(mtcars)
+```
+
+### Exercise
+Add the column `y`, defined as 2*mpg + cyl, to the `mtnew` data frame.
+
+### Solution
+```{r}
+
+```
+
+### Exercise
+Remove the columns `disp` and `hp` from `mtnew` by assigning `NULL` to them.
+
+### Solution
+```{r}
+
+```
+
+:::
+
+## Accessing with indices
+
+::: {.panel-tabset}
+
+### Numerical indexing
+
+It's often handy to access columns, and rows, using numeric indices. 
+
+Index columns like this:
+```{r}
+mtcars[, 4] #mtcar$hp
+```
+Rows like this:
+
+```{r}
+mtcars[1:3, ] #three first rows.
+```
+
+### Tail and head
+You can index from the bottom up using `tail`.
+
+```{r}
+tail(mtcars$mpg, 5)
+```
+
+From the top, use `head`.
+
+```{r}
+head(mtcars$mpg, 3)
+```
+
+### Exercise
+Find the `wt` of the five first rows using numeric indexing.
+
+### Solution
+```{r}
+
+```
+
+### Exercise
+Find the `wt` of the 3rd, 4th, and 5th row.
+
+### Solution
+```{r}
+
+```
+
+### Exercise
+Find the `wt` and `carb` of the five last elements
+
+### Solution
+```{r}
+
+```
+
+:::
+
+# Linear regression
+
+## Marketing data
+```{r}
+marketing <- datarium::marketing
+head(marketing)
+```
+
+## Running a regression
+We run a linear regression using *formulas*.
+```{r}
+marketing <- datarium::marketing
+model <- lm(sales ~ youtube + facebook + newspaper, data = marketing)
+model 
+```
+
+## Summary
+
+:::{.panel-tabset}
+### Summmary
+Most important information is contained in the `summary(model)` object.
+```{r}
+summary(model)
+```
+
+### Exercise
+Inspect the model summary using `str`. Extract the adjusted $R^2$ from the model.
+
+### Solution
+```{r}
+
+```
+
+### Exercise
+Use `str` on the model summary and the model itself to extract the residuals of the model.
+
+### Solution
+```{r}
+
+```
+
+:::
+
+## Generic functions
+
+::: {.panel-tabset}
+### Generics
+Linear regression, and many other models, support the generic functions `predict`, `coef`, and `resid`.
+
+```{r}
+head(predict(model), 5)
+```
+
+```{r}
+head(resid(model), 5)
+```
+
+```{r}
+coef(model)
+```
+
+### Exercise
+Plot residuals on the `x`-axis and the fitted (predicted) values on the `y`-axis. Give the resulting plot suitable axis labels and a good title.
+
+```{r}
+plot(y = resid(model), x = predict(model), xlab = "Predicted", ylab="Residuals", main = "Residual plot")
+```
+
+### Exercise
+Find the *p*-values of the model and report them as an atomic vector `pvals`. Why would you want to do this? (Use `str` on the model summary.)
+
+### Solution
+```{r}
+
+```
+
+:::
+
+## Plotting the model
+```{r}
+par(mfrow=c(2,2))
+plot(model)
+```
+
+## Improving the model
+```{r}
+pairs(marketing)
+```
+
+The relationship between `sales` and `youtube` appears logarithmic. (And heteroskedastic.)
+
+```{r}
+min(marketing$youtube)
+```
+
+## Log transform
+```{r}
+model_log <- lm(sales ~ log(youtube) + facebook, data = marketing)
+```
+
+```{r}
+summary(model_log)
+```
+
+## Plot
+
+::: {.panel-tabset}
+
+### Plot
+```{r}
+par(mfrow=c(2,2))
+plot(model_log)
+```
+
+### Exercise
+> See if you can improve the model further by adding a linear term `youtube` to the regression model formula. Investigate the adjusted $R^2$ and the residual plots.
+
+### Solution
+```{r}
+
+```
+
+:::
+
+
+## Plot
+```{r}
+par(mfrow=c(2,2))
+plot(model_log_slope)
+```
+
+# Logistic regression
+
+## Titanic
+Consider the famous Titanic data set
+```{r}
+titanic <- datarium::titanic.raw
+head(titanic)
+```
+
+
+## Logistic regression
+
+```{r}
+model_titanic <- glm(
+  Survived ~ Class + Sex + Age, 
+  data = titanic, 
+  family=binomial(link="logit"))
+```
+
+```{r}
+summary(model_titanic)
+```
+
+
+## Interaction term
+```{r}
+model_titanic_interact <- glm(
+  Survived ~ Class + Sex * Age, 
+  data = titanic, 
+  family=binomial(link="logit"))
+```
+
+```{r}
+summary(model_titanic_interact)
+```
+
+
+## Anova table
+
+::: {.panel-tabset}
+
+### ANOVA
+We can run an ANOVA to find if the interaction is significant.
+
+```{r}
+anova(model_titanic, model_titanic_interact)
+```
+
+### Exercise
+Using the tools we just covered, investigate if there is a significant interaction effect between `Sex` and `Class`. (Compare to the model with an interaction between `Sex` and `Age`.)
+
+### Solution
+```{r}
+
+```
+
+### Exercise
+* Recall (or get to know!) that a probit regression is a binary regression model, i.e., a generalized linear model (glm) with a binomial family. 
+* By investigating the documentation of `binomial`, figure out how to run a probit regression. Run the interaction analysis with probit instead of logit. 
+* Evaluate the models using the `AIC` generic. (Lower is better.)
+
+### Solution
+```{r}
+
+```
+
+:::

@@ -1,0 +1,769 @@
+---
+title: "1: Variables and types"
+subtitle: "R for faculty, Fall 2024"
+author: "Jonas Moss"
+format:
+  revealjs:
+    error: True
+    theme: [default, custom.scss]
+    width: 1600
+    height: 900
+    embed-resources: True
+    mainfont: "Verdana"
+    min-scale: 0.2
+    max-scale: 2
+    echo: true
+---
+
+# Basics
+
+## Getting started
+
+* Open the `01-variables-and-types.qmd` file inside your `R` project. 
+
+* The content of the file make look scary and messy at first. If it does, great! If it doesn't -- great!
+
+* Create a new file `tmp.R` by pressing `CTRL+SHIFT+N`. This is nice to play around with.
+
+* You may "play" the code blocks in the this document when you come across them.
+
+## Printing
+
+```{r}
+print("Welcome to the R programming course.")
+```
+
+The `print` function prints it input to the terminal. 
+
+:::{.panel-tabset}
+
+### Exercise
+Use the `print` function to print `"History repeats itself, first as tragedy, second as farce."`.
+
+### Solution
+```{r}
+print("History repeats itself, first as tragedy, second as farce.")
+```
+:::
+
+## Verify `R` version
+
+```{r}
+version
+```
+
+
+# Numbers
+
+## Arithmetic
+
+Surprise surprise, `R` supports numbers and arithmetic operations.
+```{r}
+(1 + 3 / 2 - 0.1) * 7.5
+```
+
+Exponentiate using `^` or `**`
+```{r}
+10^2
+10**2
+```
+
+:::{.panel-tabset}
+
+### Exercise 1
+Calculate the sum of the first 10 whole numbers, i.e., `1+2+3 ... + 10`.
+
+### Solution 1
+```{r}
+1 + 2 + 4 + 5 + 6 + 7 + 8 + 9 + 10
+```
+
+### Exercise 2
+
+Calculate the square root of `1524157875019052100.`
+
+### Solution 
+ 
+```{r}
+1524157875019052100^(1/2)
+```
+
+```{r}
+1524157875019052100**(1/2)
+```
+
+```{r}
+sqrt(1524157875019052100)
+```
+
+:::
+
+## Mathematical functions
+
+Most standard mathematical functions are supported by `R`:
+```{r}
+print(exp(1))
+print(cos(pi/2))
+```
+
+:::{.panel-tabset}
+
+### Exercise 
+Figure out how to calculate the exponential function and the factorial function ($n! = 1\cdot 2\cdot 3\cdots n$). Calculate $e^5$, $e^{100}$,$5!$, and $1000!$.
+
+### Solution 
+ 
+```{r}
+exp(5)
+exp(100)
+factorial(5)
+factorial(1000)
+```
+
+### Exercise 
+Inspect the documentation of `floor`. Calculate the integer nearest `3.77` round down and rounding up.
+
+### Solution
+```{r}
+print(floor(3.77))
+print(ceiling(3.77))
+```
+
+:::
+
+
+
+## Exotic numbers
+
+Common mathematical constants can be accessed:
+```{r}
+print(pi)          # Ratio of a circle's circumference to its diameter, 
+print(exp(1))      # Euler's number
+print(-digamma(1)) # Euler–Mascheroni constant
+```
+
+* These look like decimal / real numbers, but in `R` they are called *doubles*, for double-precision floating point numbers. 
+* These numbers have *finite precision* (approximately 16 decimal places.)
+
+:::{.panel-tabset}
+### Exercise
+> Find the area of a circle with radius `12.1`. 
+
+### Solution
+```{r}
+pi * 12.1^2
+```
+
+:::
+
+## Missing values
+Missing values are encoded as `NA` (not available). `NA`s are treated as *unknown values*, that could potentially be equal to any number.
+
+```{r}
+print(NA + 1)
+```
+
+Data frequently contains `NA`s. Think of them as non-responses.
+
+::: {.panel-tabset}
+
+### Exercise
+Calculate `NA * 2` and `(1 + 2 + 3) / NA`. 
+
+### Solution
+
+```{r}
+print(NA * 2)
+print((1 + 2 + 3) / NA)
+```
+
+:::
+
+
+## Infinite and not a number (NaN)
+
+
+::: {.panel-tabset}
+
+### Special numbers
+In addition to `NA` we have some special numbers:
+
+* **Infinity** `-Inf`, `Inf`
+* **Not a number** `NaN`
+
+Since doubles (i.e., real numbers on a computer) have finite precision, they can *overflow* to infinity.
+
+```{r}
+exp(1000)
+```
+
+The number `NaN` encodes numbers that don't exist:
+
+```{r}
+Inf - Inf
+```
+
+### Exercise
+Calculate `NA/NA`, `NaN - NA`, `NaN/NA`, `Inf/Inf`, and `Inf + NaN`.
+
+### Solution
+```{r}
+NA/NA
+NaN - NA
+NaN/NA
+Inf/Inf
+Inf + NaN
+```
+
+:::
+
+
+## Complex numbers
+Complex numbers are supported. They might occur if you ever do *eigenvalue decompositions*.
+
+```{r}
+1+pi*1i
+```
+
+An imaginary number is created by appending `i`, as in `1i` above. 
+
+Complex numbers are supported, but don't expect to use them a lot.
+
+::: {.panel-tabset}
+
+### Exercise
+Verify that $i^2=-1$.
+
+### Solution
+
+```{r}
+1i^2
+```
+:::
+
+## Euler's identity
+The beautiful *Euler's identity* says that $e^{i\pi} = -1$.
+
+```{r}
+exp(pi*1i)
+```
+
+* Here `1.224606e-16i` is not equal to `0`! 
+* This is a case of *numerical inaccuracy*. 
+* Calculations that are, theoretically, equal to `0`, will in general not be `0` when calculated in a finite-precision language.
+
+# Strings
+
+## Strings
+Strings (called `character` in `R`) is programming lingo for "text". Strings are made using single or double quotes.
+
+You can paste together text using `paste0`. Here we paste together `"Today:"` and the current date.
+```{r}
+print(paste0("Today: ",  Sys.Date()))
+```
+
+The function `Sys.Date` returns the current date.
+
+::: {.panel-tabset}
+
+### Exercise 1
+Investigate `Sys.Date` using `?Sys.Date`, and figure out how to find the system time. Print the system time as `Current time: (time)`.
+
+### Solution 1
+
+```{r}
+print(paste0("Current time: ",  Sys.time()))
+```
+
+### Exercise 2
+Print "I love the number {x}!", where {x} is the sum of the 5 first whole numbers.
+
+### Solution 2
+```{r}
+print(paste0("I love the number ", 1 + 2 + 3 + 4 + 5, "!"))
+```
+
+:::
+
+## Strings and numbers
+
+Consider the following code:
+```{r}
+5 + "5"
+```
+
+This doesn't work because "5" isn't a number - it's a string. You can convert the string to a number using `as.numeric` though.
+
+```{r}
+5 + as.numeric("5")
+```
+
+Changing a type in this way is called *casting*, and is automatically done when calling `paste0`.
+
+## String manipulation
+
+* String manipulation is not often done in `R`.
+* If you need it, take a look at [`stringi`](https://github.com/gagolews/stringi) or [`stringr`](https://stringr.tidyverse.org/).
+* Base `R`s string manipulation tools are poor.
+
+String manipulation is used to do stuff like this:
+
+```{r}
+#install.packages("stringi)
+stringr::str_replace_all("In the woods there are witches!", "the", "a")
+```
+
+# Variables
+
+## Assignment
+Let's calculate the area of a rectange.
+
+```{r}
+width <- 3.5 # This is a comment! Comments are not executed.
+height <- 2.5  
+width * height
+```
+
+Here `width` and `height` are *variables*. A variable is a "named box" holding a value.
+
+You assign a value to a variable using `<-` or `=`. (`<-` is most common.)
+
+:::{.panel-tabset}
+
+### Exercise
+Assign the value "Mr" to `x` and "Beast" to `y`. Then call `paste0(x,y)`. What is the output?
+
+### Solution
+```{r}
+x <- "Mr"
+y <- "Beast"
+paste0(x,y)
+```
+
+LOL! MrBeast is awesome!
+
+:::
+
+## Undefined variables
+
+Using an undefined variable will lead to an error:
+
+```{r}
+width <- 3.5 # This is a comment! Comments are not executed.
+height <- 2.5  
+width * heigth  # Note the typo in height
+```
+
+
+:::{.panel-tabset}
+
+### Exercise
+Fix the program above.
+
+### Solution
+```{r}
+width <- 3.5 # This is a comment! Comments are not executed.
+height <- 2.5  
+width * height  # Note the typo in height
+```
+
+:::
+
+## Reassigning variables.
+
+Read the following statements and tick the box next to the correct answer. (Taken from [this blog.](https://blog.codinghorror.com/separating-programming-sheep-from-non-programming-goats/))
+
+```{r}
+#| eval: False
+a <- 10;
+b <- 20;
+a <- b;
+```
+
+What are the values of `a` and `b`?
+
+* [ ] a = 20  b = 10
+* [ ] a = 30  b = 20
+* [ ] a = 30  b = 0
+* [ ] a = 20  b = 20
+* [ ] a = 10  b = 30
+* [ ] a = 10  b = 20
+
+
+## Variables names
+
+:::{.panel-tabset}
+
+### Names
+
+* Variable names must only contain underscores, letters and digits. 
+* They cannot start with a digit and they cannot be a *keyword* (reserved words that have a special meaning). 
+* Variable names are case-sensitive, i.e., `area` and `Area` denote two different variables.
+
+### Exercise
+Fix the following program
+
+```{r}
+X <- "Fru"
+1y <- "Beist"
+paste0(x,1y)
+```
+
+### Solution
+
+```{r}
+x <- "Fru"
+y <- "Beist"
+paste0(x,y)
+```
+
+:::
+
+
+## Naming conventions
+* Use *snake_case* for variable names. 
+* I.e, lower case words separated by an underscore, for example `total_area`. 
+* This convention is not always followed by `R` itself, but is followed by the important `tidyverse` packages. See [the style guide](https://style.tidyverse.org/) for details.
+
+:::{.panel-tabset}
+### Exercise
+Improve the variable names.
+
+```{r}
+Price <- 100
+Discount.Factor <- 0.1
+Final_Price <- Price * (1 - Discount.Factor) 
+```
+
+### Solution
+```{r}
+price <- 100
+discount_factor <- 0.1
+final_price <- price * (1 - discount_factor) 
+```
+
+:::
+
+## More illegal names
+None of these are legal variable names:
+
+```{r}
+@name = 1                          # variable name contains an illegal character
+1st_participant = 'Homer Simpson'  # variable name cannot start with a digit
+if = '2021-06-21'                  # "if" is a keyword
+```
+
+There are only a few reserved words.
+
+|     |      |        |         |          |
+| --- | ---  | -----  |    ---  | ----     |
+| if  |	else |	repeat |	while |	function |
+| for	 |in	| next |	break |	TRUE |
+| FALSE	 |NULL	| Inf |	NaN	| NA |
+| NA_integer_ |	NA_real_	| NA_complex_ |	NA_character_	| … |
+
+
+## Types
+
+::: {.panel-tabset}
+
+### `typeof`
+You can find the *type* of a variable using the `typeof` function.
+
+```{r}
+print(paste("Type of 1:", typeof(1)))
+print(paste("Type of 1L:", typeof(1L)))
+print(paste("Type of 'Hello, world':", typeof('Hello world!')))
+print(paste("Type of 1.2:", typeof(1.2)))
+```
+
+You may write, e.g., `55L` to tell `R` that 55 is an *integer*, not a floating point.
+
+### Exercise
+Predict the type of the following objects, then check in `R`: `pi`, `Sys.Date()`, `5L + 5L` `Sys.Date`.
+
+### Solution
+```{r}
+print(typeof(pi))
+print(typeof(Sys.Date()))
+print(typeof(5L+5L))
+print(typeof(Sys.Date))
+```
+
+:::
+
+# Booleans 
+
+## Booleans
+Logicals are called `TRUE` (or `T`) and `FALSE` (or `F`). ***Don't*** use the shorthands.
+
+Test for equality:
+
+```{r}
+1 == 1
+```
+
+::: {.panel-tabset}
+### Exercise
+Calculate `TRUE + TRUE`, `1*TRUE`, and `TRUE * FALSE`. What happens?
+
+### Solution
+```{r}
+TRUE + TRUE
+1*TRUE
+TRUE * FALSE
+```
+
+### Exercise
+What is `NA==2`? Why?
+
+### Solution
+`NA` encodes an *unknown* value. It's not known if `NA` equals `2`, hence the resulting value is *also* unknown!
+```{r}
+NA == 2
+```
+
+### Exercise
+Check if `F` equals `FALSE`. Then call `F <- TRUE`. Is `F` still equal to `FALSE`? Try the same with `FALSE <- TRUE`.
+
+### Solution
+```{r}
+F == FALSE
+F <- TRUE
+F == FALSE
+FALSE <- TRUE
+```
+:::
+
+## Tests for inequality
+For strict inequality:
+
+```{r}
+1 > 2
+```
+Or weak inequality:
+```{r}
+1 <= 3
+```
+
+Or inequality:
+
+```{r}
+1 != 3
+```
+
+:::{.panel-tabset}
+### Exercise
+Test if $5>=3$ using the appropriate syntax. 
+
+### Solution
+```{r}
+5 >= 3
+3 <= 5
+```
+:::
+
+## Numerical inaccuracy, again
+
+:::{.panel-tabset}
+
+### Exercise
+
+What does this expression evaluate to? 
+
+```{r}
+#| eval: False
+0.2 + 0.1 == 0.3
+```
+
+### Solution
+```{r}
+0.2 + 0.1 == 0.3
+```
+
+### Exercise
+What's happening? Use the `sprintf("%.53f", x`) functions on the appropriate `x`s to evaluate.
+
+### Solution
+```{r}
+sprintf("%.53f",0.2 + 0.1)
+```
+
+```{r}
+sprintf("%.53f",0.3)
+```
+
+:::
+
+## Testing "rough" equality
+
+The function `all.equal` is used to test approximate equality of doubles (i.e., decimal numbers).
+
+```{r}
+0.3 == 0.1 + 0.2
+all.equal(0.3, 0.1 + 0.2)
+```
+
+:::{.panel-tabset}
+
+### Exercise
+Inspect `abs(0.3 - (0.1+0.2))`. (You need the parentheses! Why?) How can you use this to test for approximate equality?
+
+### Solution
+```{r}
+abs(0.3 - (0.1+0.2))
+```
+We can check if this number is small, e.g., less than `1e-7`. 
+
+:::
+
+# Functions
+
+## Functions
+
+A function takes an input, does something with it, and returns a value.
+```{r}
+abs(-5)
+exp(5)
+```
+
+Functions can be *composed*.
+
+```{r}
+exp(abs(-5))
+```
+
+::: {.panel-tabset}
+
+### Exercise
+Calculate the exponential of $x^2+2$, where $x=1.2$.
+
+### Solution
+```{r}
+x <- 1.2
+exp(x^2+2)
+```
+
+:::
+
+## Documentation
+* All built-in functions in `R`, and packages downloaded from `CRAN`, are documented. 
+* Everyone checks the documentation all the time!
+
+```{r}
+#| eval: False
+?abs
+```
+
+We see that `abs` takes one *mandatory* argument `x`.
+
+```{r}
+abs()
+```
+
+## Arguments
+
+The name of the arguments are arbitrary and not affected by variables in your workspace.
+
+```{r}
+x = 1
+abs(55)
+```
+
+Functions often take multiple arguments.
+```{r}
+#| eval: False
+?log
+```
+
+Here `x` is mandatory. The `base` argument is *optional*, and defaults to Euler's number. (The natural logarithm).
+
+
+## Modifying optional arguments
+
+```{r}
+x = 5
+log(x, base = exp(1))
+log(x)
+```
+
+::: {.panel-tabset}
+### Exercise
+Calculate the base 10 logarithm of `100` using the `log` function.
+
+### Solution
+
+```{r}
+log(100, base = 10)
+```
+:::
+
+## Arbitrary number of arguments
+
+:::{.panel-tabset}
+
+### Arguments
+Some functions take an arbitrary number of arguments, as shown by the `...` in the documentation.
+
+```{r}
+#| eval: False
+?sum
+```
+
+
+```{r}
+sum(1,2,3,4)
+```
+
+
+```{r}
+sum(1,2,3,NA)
+```
+
+### Exercise
+Using an optional argument of `sum`, calculate `sum(1,2,3,NA)`. Don't remove the `NA`! (Look at the documentation!)
+
+### Solution
+```{r}
+sum(1,2,3,NA,na.rm=TRUE)
+```
+
+### Exercise
+Define `x=c(1,2,3,NA)`. Calculate the mean of `x` with `NA`s removed.
+
+### Solution
+
+```{r}
+mean(1,2,3,NA,na.rm=TRUE)
+```
+:::
+
+## Finding functions
+* Most "natural" statistical functions, such as `sum` and `mean`, are available in `R`, but you typically have to find them yourself. 
+* Want to calculate the median? Start typing `med`, and see what happens!
+
+:::{.panel-tabset}
+### Exercise
+Define `x<-mtcars$mpg`. Inspect `x`, then calculate its mean, median, variance, and standard deviation (`sd`).
+
+### Solution
+
+```{r}
+x<-mtcars$mpg
+x
+```
+```{r}
+mean(x)
+median(x)
+var(x)
+sd(x)
+```
+:::
+
+## Summary
+
+1. Functions take in arguments and return a value.
+2. Optional arguments have default values. You can see them by typing the function name or looking at the documentation.
+3. The `...` notation tells you that the function takes an arbitrary number of arguments.
+
+

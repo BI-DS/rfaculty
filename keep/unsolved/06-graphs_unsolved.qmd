@@ -1,0 +1,1085 @@
+---
+title: "6: Graphics"
+subtitle: "R for faculty, Fall 2024"
+author: "Jonas Moss"
+format:
+  revealjs:
+    error: True
+    theme: [default, custom.scss]
+    width: 1920
+    height: 1080
+    embed-resources: True
+    mainfont: "Verdana"
+    min-scale: 0.2
+    max-scale: 2
+    echo: true
+    lightbox: true
+---
+
+# Graphics in `R`
+
+There are three main options for doing graphics in `R`:
+
+* The "base" graphics in the `graphics` library (preinstalled).
+* The `ggplot2` library, which is more flexible but harder to use.
+* The `lattice` library, which I am unfamiliar with.
+
+We focus on base graphics.
+
+## How doe people learn graphics?
+
+1. Make some graphs to learn the basics.
+2. You want to do something special. How? StackExchange and ChatGPT,
+   more or less.
+3. Or what you vaguely remember seeing.
+
+# Scatterplots
+
+## Goal
+
+```{r}
+#| echo: False
+#| out-width: 100%
+#| out-height: 100%
+#| fig-format: svg
+model <- loess(disp ~ mpg, data = mtcars)
+plot(x = mtcars$mpg[c(14, 28)], 
+     y = mtcars$disp[c(14, 28)], 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information concerning automobiles",
+     col = rgb(1, 0, 0, 0.6),
+     pch = 18,
+     cex = 4,
+     xlim = c(min(mtcars$mpg), max(mtcars$mpg)),
+     ylim = c(min(mtcars$disp), max(mtcars$disp)),
+     bty = "l")
+points(x = mtcars$mpg[-c(14, 28)], 
+       y = mtcars$disp[-c(14, 28)],
+       pch = 20,
+       col = "black",
+       cex = 1.6)
+text(x = mtcars$mpg[c(14, 28)], 
+     y = mtcars$disp[c(14, 28)],
+     labels = rownames(mtcars)[c(14, 28)],
+     pos = c(1, 3),
+     offset = c(1,1))
+x <- sort(mtcars$mpg)
+lines(x, predict(model, x), lwd = 2, lty = 3, col = "grey")
+legend("topright", 
+       legend = c("Scatterplot smoother", "Unimportant cars", "Important cars"), 
+       col = c("grey", "black", "red"),
+       pch = c(NA,20, 18),
+       lty = c(3, NA, NA),
+       bty = "n")
+```
+
+## Getting started
+
+::: {.panel-tabset}
+
+### Basic plot
+
+```{r}
+#| fig-align: center
+plot(x = mtcars$mpg, 
+     y = mtcars$disp)
+```
+
+### Labels
+
+```{r}
+#| fig-align: center
+plot(x = mtcars$mpg, 
+     y = mtcars$disp, 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement")
+```
+
+### Title
+
+```{r}
+#| fig-align: center
+plot(x = mtcars$mpg, 
+     y = mtcars$disp, 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information concerning automobiles")
+```
+
+:::
+
+## Modify colors
+
+::: {.panel-tabset}
+
+### `col`
+```{r}
+#| fig-align: center
+plot(x = mtcars$mpg, 
+     y = mtcars$disp, 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information concerning automobiles",
+     col = "red")
+```
+
+### Exercise
+Change the color of the elements to cyan.
+
+### Solution
+```{r}
+
+```
+
+:::
+
+## Modify the box
+
+::: {.panel-tabset}
+
+```{r}
+#| fig-align: center
+plot(x = mtcars$mpg, 
+     y = mtcars$disp, 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information concerning automobiles",
+     col = "red",
+     bty = "l")
+```
+
+### Exercise
+Remove the "box" around the points completely. (The "axes" with numbers will stay there.) Use `?par` and look for the `bty` parameter.
+
+### Solution
+```{r}
+
+```
+
+:::
+
+## Removing the axes
+
+::: {.panel-tabset}
+
+### `axes`
+```{r}
+plot(x = mtcars$mpg, 
+     y = mtcars$disp, 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information concerning automobiles",
+     col = "black",
+     axes = FALSE,
+     bty = "n")
+```
+
+### Exercise
+Remove all text from the plot, leaving only the points.
+
+### Solution
+```{r}
+
+```
+
+:::
+
+
+## Modify the point style
+
+::: {.panel-tabset}
+
+### Crosses
+```{r}
+plot(x = mtcars$mpg, 
+     y = mtcars$disp, 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information concerning automobiles",
+     col = "red",
+     pch = 10,
+     cex = 1.6)
+```
+
+### Circles
+```{r}
+plot(x = mtcars$mpg, 
+     y = mtcars$disp, 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information concerning automobiles",
+     col = "black",
+     pch = 20,
+     cex = 1.6)
+```
+
+### Exercise
+Make a scatterplot, with the same data, using triangles. To do this, find the `pch` code for a triangle (google, e.g., `pch r ` there are multiple!) and make a plot.
+
+### Solution
+```{r}
+
+```
+
+:::
+
+## Color the important cars
+::: {.panel-tabset}
+
+### Coloring
+```{r}
+#| output-location: column
+colors <- rep("black", length(mtcars$mpg))
+colors[c(14, 28)] <- "red"
+plot(x = mtcars$mpg, 
+     y = mtcars$disp, 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information concerning automobiles",
+     col = colors,
+     pch = 20,
+     cex = 1.6)
+```
+
+
+### Exercise
+Use `rownames(mtcars)` to color your three favorite cars in blue. 
+
+### Solution
+```{r}
+
+```
+
+:::
+
+## Point size of important cars
+
+::: {.panel-tabset}
+
+### Bigger points
+```{r}
+#| output-location: column
+colors <- rep("black", length(mtcars$mpg))
+colors[c(14, 28)] <- "red"
+cexes <- rep(1.6, length(mtcars$mpg))
+cexes[c(14, 28)] <- 4
+plot(x = mtcars$mpg, 
+     y = mtcars$disp, 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information concerning automobiles",
+     col = colors,
+     pch = 20,
+     cex = cexes)
+```
+
+### Exercise
+Change the point style of the red elements to a *filled diamond*.
+
+### Solution
+```{r}
+
+```
+
+:::
+
+## Plotting in the right order
+
+::: {.panel-tabset}
+The red diamonds mask the black points. We need to reverse the plot order to make it look better.
+
+### Plot
+```{r}
+#| output-location: column
+colors <- rep("black", length(mtcars$mpg))
+colors[c(14, 28)] <- "red"
+cexes <- rep(1.6, length(mtcars$mpg))
+cexes[c(14, 28)] <- 4
+pchs <- rep(20, length(mtcars$mpg))
+pchs[c(14,28)] <- 18
+plot(x = mtcars$mpg, 
+     y = mtcars$disp, 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information concerning automobiles",
+     col = colors,
+     pch = pchs,
+     cex = cexes)
+points(x = mtcars$mpg[-c(14, 28)], 
+       y = mtcars$disp[-c(14, 28)],
+       pch = 20,
+       col = "black",
+       cex = 1.6)
+```
+
+:::
+
+## Using `xlim` and `ylim`
+
+::: {.panel-tabset}
+
+### Limits
+What happens here?
+```{r}
+#| output-location: column
+plot(x = mtcars$mpg[c(14, 28)], 
+     y = mtcars$disp[c(14, 28)], 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information",
+     col = "red",
+     pch = 18,
+     cex = 4)
+points(x = mtcars$mpg[-c(14, 28)], 
+       y = mtcars$disp[-c(14, 28)],
+       pch = 20,
+       col = "black",
+       cex = 1.6)
+```
+
+### Add `xlim`/ `ylim`
+```{r}
+#| output-location: column
+plot(x = mtcars$mpg[c(14, 28)], 
+     y = mtcars$disp[c(14, 28)], 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information",
+     col = "red",
+     pch = 18,
+     cex = 4,
+     xlim = c(min(mtcars$mpg), max(mtcars$mpg)),
+     ylim = c(min(mtcars$disp), max(mtcars$disp)))
+points(x = mtcars$mpg[-c(14, 28)], 
+       y = mtcars$disp[-c(14, 28)],
+       pch = 20,
+       col = "black",
+       cex = 1.6)
+```
+
+:::
+
+## Adding transparency
+
+::: {.panel-tabset}
+
+### `rbg`
+Transparency can be added using the `rbg` function. The final argument is the level of transparency (0-1), the first three are red-green-blue values between `0` and `1`. 
+```{r}
+#| output-location: column
+plot(x = mtcars$mpg[c(14, 28)], 
+     y = mtcars$disp[c(14, 28)], 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information",
+     col = rgb(1, 0, 0, 0.6),
+     pch = 18,
+     cex = 4,
+     xlim = c(min(mtcars$mpg), max(mtcars$mpg)),
+     ylim = c(min(mtcars$disp), max(mtcars$disp)))
+points(x = mtcars$mpg[-c(14, 28)], 
+       y = mtcars$disp[-c(14, 28)],
+       pch = 20,
+       col = "black",
+       cex = 1.6)
+```
+
+### Exercise
+Make the red points even more transparent.
+
+### Solution
+```{r}
+
+```
+
+:::
+
+
+## Gridlines
+
+::: {.panel-tabset}
+### `grid`
+Use `grid` to add grid lines. Use this when the numbers are important, not just the shape.
+```{r}
+#| output-location: column
+plot(x = mtcars$mpg, 
+     y = mtcars$disp, 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information concerning automobiles",
+     col = "black",
+     cex = 1.6,
+     pch = 20,
+     bty = "l")
+grid()
+```
+
+### Exercise
+The grid line at approximately (15, 300) doesn't look good, since it's plotted above the points. Use the `point` function to fix the problem.
+
+### Solution
+```{r}
+
+```
+
+:::
+
+## Adding lines with `abline`
+
+:::{.panel-tabset}
+
+### Vertical
+```{r}
+#| output-location: column
+plot(x = mtcars$mpg, 
+     y = mtcars$disp, 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information concerning automobiles",
+     col = "black",
+     cex = 1.6,
+     pch = 20,
+     bty = "l",
+     xlim = c(0, 40))
+grid()
+points(x = mtcars$mpg, 
+     y = mtcars$disp, 
+     col = "black",
+     cex = 1.6,
+     pch = 20)
+abline(v = 10, lty = 1, lwd = 2, col = "red")
+```
+
+### Horizontal
+```{r}
+#| output-location: column
+plot(x = mtcars$mpg, 
+     y = mtcars$disp, 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information concerning automobiles",
+     col = "black",
+     cex = 1.6,
+     pch = 20,
+     bty = "l",
+     ylim = c(0, 500),
+     xlim = c(0, 40))
+grid()
+points(x = mtcars$mpg, 
+     y = mtcars$disp, 
+     col = "black",
+     cex = 1.6,
+     pch = 20)
+abline(v = 10, lty = 1, lwd = 2, col = "red")
+abline(h = 50, lty = 1, lwd = 2, col = "blue")
+```
+
+### Exercise
+Inspect the documentation of `abline` and add a purple line with slope `1000` and intercept `-50`.
+
+### Solution
+```{r}
+
+```
+
+:::
+
+## Adding labels
+
+::: {.panel-tabset}
+
+### Text
+The `text` function adds labels to a plot.
+
+```{r}
+#| output-location: column
+plot(x = mtcars$mpg[c(14, 28)], 
+     y = mtcars$disp[c(14, 28)], 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information concerning automobiles",
+     col = rgb(1, 0, 0, 0.6),
+     pch = 18,
+     cex = 4,
+     xlim = c(min(mtcars$mpg), max(mtcars$mpg)),
+     ylim = c(min(mtcars$disp), max(mtcars$disp)))
+points(x = mtcars$mpg[-c(14, 28)], 
+       y = mtcars$disp[-c(14, 28)],
+       pch = 20,
+       col = "black",
+       cex = 1.6)
+text(x = mtcars$mpg[c(14, 28)], 
+     y = mtcars$disp[c(14, 28)],
+     labels = rownames(mtcars)[c(14, 28)])
+```
+
+### Overlap
+The labels overlap the points. We must fix this manually.
+
+```{r}
+#| output-location: column
+plot(x = mtcars$mpg[c(14, 28)], 
+     y = mtcars$disp[c(14, 28)], 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information concerning automobiles",
+     col = rgb(1, 0, 0, 0.6),
+     pch = 18,
+     cex = 4,
+     xlim = c(min(mtcars$mpg), max(mtcars$mpg)),
+     ylim = c(min(mtcars$disp), max(mtcars$disp)),
+     bty = "l")
+points(x = mtcars$mpg[-c(14, 28)], 
+       y = mtcars$disp[-c(14, 28)],
+       pch = 20,
+       col = "black",
+       cex = 1.6)
+text(x = mtcars$mpg[c(14, 28)], 
+     y = mtcars$disp[c(14, 28)],
+     labels = rownames(mtcars)[c(14, 28)],
+     pos = c(1, 3),
+     offset = c(1,1))
+```
+
+:::
+
+## Adding a scatterplot smoother
+
+::: {.panel-tabset}
+The `loess` function estimates a scatterplot smoother.
+
+```{r}
+model <- loess(disp ~ mpg, data = mtcars)
+plot(mtcars$mpg, predict(model))
+```
+
+Let's use a line plot.
+
+```{r}
+plot(mtcars$mpg, predict(model), type = "l")
+```
+
+We must sort the miles per gallons to get a good plot.
+
+### Try 1
+```{r}
+#| output-location: column
+x <- sort(mtcars$mpg)
+plot(x, predict(model, x), type = "l")
+```
+
+### Try 2
+```{r}
+#| output-location: column
+x <- sort(mtcars$mpg)
+plot(x, predict(model, x), type = "l", lwd = 2)
+```
+
+### Try 3
+```{r}
+#| output-location: column
+x <- sort(mtcars$mpg)
+plot(x, predict(model, x), type = "l", lwd = 2, lty = 3, col = "grey")
+```
+
+### Combined
+```{r}
+#| output-location: column
+plot(x = mtcars$mpg[c(14, 28)], 
+     y = mtcars$disp[c(14, 28)], 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information concerning automobiles",
+     col = rgb(1, 0, 0, 0.6),
+     pch = 18,
+     cex = 4,
+     xlim = c(min(mtcars$mpg), max(mtcars$mpg)),
+     ylim = c(min(mtcars$disp), max(mtcars$disp)),
+     bty = "l")
+points(x = mtcars$mpg[-c(14, 28)], 
+       y = mtcars$disp[-c(14, 28)],
+       pch = 20,
+       col = "black",
+       cex = 1.6)
+text(x = mtcars$mpg[c(14, 28)], 
+     y = mtcars$disp[c(14, 28)],
+     labels = rownames(mtcars)[c(14, 28)],
+     pos = c(1, 3),
+     offset = c(1,1))
+x <- sort(mtcars$mpg)
+lines(x, predict(model, x), lwd = 2, lty = 3, col = "grey")
+```
+### Exercise
+The scatterplot smoother is plotted above the data points, crearting an ugly effec (see mpg ~ 30). Modify the code so the points are plotted on top of the smoother. 
+
+### Solution
+```{r}
+
+```
+
+:::
+
+## Legends
+
+::: {.panel-tabset}
+
+### Simple
+
+```{r}
+#| output-location: column
+model <- loess(disp ~ mpg, data = mtcars)
+plot(x = mtcars$mpg[c(14, 28)], 
+     y = mtcars$disp[c(14, 28)], 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information concerning automobiles",
+     col = rgb(1, 0, 0, 0.6),
+     pch = 18,
+     cex = 4,
+     xlim = c(min(mtcars$mpg), max(mtcars$mpg)),
+     ylim = c(min(mtcars$disp), max(mtcars$disp)),
+     bty = "l")
+points(x = mtcars$mpg[-c(14, 28)], 
+       y = mtcars$disp[-c(14, 28)],
+       pch = 20,
+       col = "black",
+       cex = 1.6)
+text(x = mtcars$mpg[c(14, 28)], 
+     y = mtcars$disp[c(14, 28)],
+     labels = rownames(mtcars)[c(14, 28)],
+     pos = c(1, 3),
+     offset = c(1,1))
+x <- sort(mtcars$mpg)
+lines(x, predict(model, x), lwd = 2, lty = 3, col = "grey")
+legend("topright", legend = c("Scatterplot smoother", "Unimportant cars", "Important cars"), col = c("grey", "black", "red"))
+```
+
+### Colors
+
+```{r}
+#| output-location: column
+plot(x = mtcars$mpg[c(14, 28)], 
+     y = mtcars$disp[c(14, 28)], 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information concerning automobiles",
+     col = rgb(1, 0, 0, 0.6),
+     pch = 18,
+     cex = 4,
+     xlim = c(min(mtcars$mpg), max(mtcars$mpg)),
+     ylim = c(min(mtcars$disp), max(mtcars$disp)),
+     bty = "l")
+points(x = mtcars$mpg[-c(14, 28)], 
+       y = mtcars$disp[-c(14, 28)],
+       pch = 20,
+       col = "black",
+       cex = 1.6)
+text(x = mtcars$mpg[c(14, 28)], 
+     y = mtcars$disp[c(14, 28)],
+     labels = rownames(mtcars)[c(14, 28)],
+     pos = c(1, 3),
+     offset = c(1,1))
+x <- sort(mtcars$mpg)
+lines(x, predict(model, x), lwd = 2, lty = 3, col = "grey")
+legend("topright", 
+       legend = c("Scatterplot smoother", "Unimportant cars", "Important cars"),
+       col = c("grey", "black", "red"), 
+       lwd = c(2, NA, NA),
+       pch = c(NA, 20, 16),
+       lty = c(3, NA, NA))
+```
+
+### No box
+
+```{r}
+#| output-location: column
+plot(x = mtcars$mpg[c(14, 28)], 
+     y = mtcars$disp[c(14, 28)], 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information concerning automobiles",
+     sub = "One gallon equals ~3.8 litres",
+     col = rgb(1, 0, 0, 0.6),
+     pch = 18,
+     cex = 4,
+     xlim = c(min(mtcars$mpg), max(mtcars$mpg)),
+     ylim = c(min(mtcars$disp), max(mtcars$disp)),
+     bty = "l")
+points(x = mtcars$mpg[-c(14, 28)], 
+       y = mtcars$disp[-c(14, 28)],
+       pch = 20,
+       col = "black",
+       cex = 1.6)
+text(x = mtcars$mpg[c(14, 28)], 
+     y = mtcars$disp[c(14, 28)],
+     labels = rownames(mtcars)[c(14, 28)],
+     pos = c(1, 3),
+     offset = c(1,1))
+x <- sort(mtcars$mpg)
+lines(x, predict(model, x), lwd = 2, lty = 3, col = "grey")
+legend("topright", 
+       legend = c("Scatterplot smoother", "Unimportant cars", "Important cars"),
+       col = c("grey", "black", rgb(1, 0, 0, 0.6)), 
+       lwd = c(2, NA, NA),
+       pch = c(NA, 20, 18),
+       lty = c(3, NA, NA),
+       pt.cex = c(0, 1, 4/1.6),
+       bty = "n")
+```
+
+### Exercise
+Modify the code so that the "Scatterplot smoother" appears at the bottom of the legend, not the top. The important cars should be on the top.
+
+### Solution
+```{r}
+
+```
+
+:::
+
+## Saving the graph
+
+```{r}
+#| eval: False
+pdf(file = "cars.pdf", width = 8, height = 8) 
+#
+#
+#
+dev.off()
+```
+
+## In practice
+
+```{r}
+#| eval: False
+pdf(file = "cars.pdf", width = 8, height = 8) 
+
+plot(x = mtcars$mpg[c(14, 28)], 
+     y = mtcars$disp[c(14, 28)], 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     main = "Important information concerning automobiles",
+     sub = "One gallon equals ~3.8 litres",
+     col = rgb(1, 0, 0, 0.6),
+     pch = 18,
+     cex = 4,
+     xlim = c(min(mtcars$mpg), max(mtcars$mpg)),
+     ylim = c(min(mtcars$disp), max(mtcars$disp)),
+     bty = "l")
+points(x = mtcars$mpg[-c(14, 28)], 
+       y = mtcars$disp[-c(14, 28)],
+       pch = 20,
+       col = "black",
+       cex = 1.6)
+text(x = mtcars$mpg[c(14, 28)], 
+     y = mtcars$disp[c(14, 28)],
+     labels = rownames(mtcars)[c(14, 28)],
+     pos = c(1, 3),
+     offset = c(1,1))
+x <- sort(mtcars$mpg)
+lines(x, predict(model, x), lwd = 2, lty = 3, col = "grey")
+legend("topright", 
+       legend = c("Important cars", "Unimportant cars", "Scatterplot smoother"),
+       col = c(rgb(1, 0, 0, 0.6), "black", "grey"), 
+       lwd = c(NA, NA, 2),
+       pch = c(18, 20, NA),
+       lty = c(NA, NA, 3),
+       pt.cex = c(4/1.6, 1, 0),
+       bty = "n")
+
+dev.off()
+```
+
+## Modify height and width
+```{r}
+#| eval: False
+pdf(file = "cars.pdf", width = 16, height = 8) 
+
+plot(x = mtcars$mpg[c(14, 28)], 
+     y = mtcars$disp[c(14, 28)], 
+     xlab = "Miles per gallon", 
+     ylab = "Displacement", 
+     sub = "One gallon equals ~3.8 litres",
+     col = rgb(1, 0, 0, 0.6),
+     pch = 18,
+     cex = 4,
+     xlim = c(min(mtcars$mpg), max(mtcars$mpg)),
+     ylim = c(min(mtcars$disp), max(mtcars$disp)),
+     cex.lab = 1.5,
+     cex.main = 2,
+     bty = "l")
+points(x = mtcars$mpg[-c(14, 28)], 
+       y = mtcars$disp[-c(14, 28)],
+       pch = 20,
+       col = "black",
+       cex = 1.6)
+text(x = mtcars$mpg[c(14, 28)], 
+     y = mtcars$disp[c(14, 28)],
+     labels = rownames(mtcars)[c(14, 28)],
+     pos = c(1, 3),
+     offset = c(1,1))
+x <- sort(mtcars$mpg)
+lines(x, predict(model, x), lwd = 3, lty = 3, col = "grey")
+legend("topright", 
+       legend = c("Scatterplot smoother", "Unimportant cars", "Important cars"),
+       col = c("grey", "black", rgb(1, 0, 0, 0.6)), 
+       lwd = c(3, NA, NA),
+       pch = c(NA, 20, 18),
+       lty = c(3, NA, NA),
+       pt.cex = c(0, 1, 4/1.6),
+       cex = c(1.3,1.3,1.3),
+       bty = "n")
+
+dev.off()
+```
+
+Some journals do not accept `pdf` graphs.
+
+* `BMP`, `JPEG`, `PNG` and `TIFF`. Avoid these if possible, as they are lossy.
+* `eps` is a PostScript format that is often accepted.
+* `svg` is probably the preferred format.
+
+```{r}
+#| eval: False
+svg("cars.svg", width = 8, height = 8) 
+
+dev.off()
+```
+
+## Plotting parameters
+
+### Documentation
+* `xlab`
+* `ylab`
+* `main`
+
+### Multiple plots
+* `lines`
+* `points`
+* `add`
+
+### Styling
+* `color`
+* `type`
+* `lty`
+* `pch`
+
+# Statistical plots
+
+There are many satistical plots, including:
+
+* boxplot
+* barplot
+* hist
+
+## Box plots
+:::{.panel-tabset}
+
+### Box plot
+```{r}
+boxplot(mtcars$hp, mtcars$disp)
+```
+
+### With names
+```{r}
+boxplot(mtcars$hp, mtcars$disp, names = c("Horsepower", "Displacement"))
+```
+
+### Exercise
+Change the color of `hp` to green and displacement to yellow.
+
+```{r}
+boxplot(mtcars$hp, mtcars$disp, names = c("Horsepower", "Displacement"), col = c("green", "yellow"))
+```
+
+### Exercise
+Add an informative title to the plot. Change the colors back to something pleasant.
+
+```{r}
+boxplot(mtcars$hp, mtcars$disp, names = c("Horsepower", "Displacement"), col = c("white", "white"), main = "Distribution of car properties")
+```
+
+### Exercise
+Make a boxplot of `wt`, `drat`, and `cyl`. Add labels and title.
+
+```{r}
+boxplot(mtcars$wt, mtcars$drat, mtcars$cyl, names = c("Weight", "Rear axle ratio", "Cylinders"), col = "white", main = "Distribution of car properties")
+```
+
+:::
+
+## Count plot
+```{r}
+table(mtcars$cyl)
+barplot(table(mtcars$cyl))
+```
+
+## `ggplot2`
+
+The package `ggplot2` is a better option for bar graphs and count graphs. See, e.g., [this page](https://r-graphics.org/recipe-bar-graph-stacked-bar).
+
+## Histograms
+
+:::{.panel-tabset}
+### Simple histogram
+```{r}
+hist(mtcars$mpg)
+```
+
+### With labels
+```{r}
+hist(mtcars$mpg, xlab = "Miles per gallon", main = "Histogram of miles per gallon")
+```
+
+
+### Exercise
+Change the color of the histogram to white. Make the histogram a *density histogram*, i.e., the integral should integrate to 1. (By default, it shows counts.)
+
+```{r}
+hist(mtcars$mpg, xlab = "Miles per gallon", main = "Histogram of miles per gallon", col = "white", freq = FALSE)
+```
+
+### Exercise
+The default value for `breaks` (the number of bins + 1) is too small by default, as `R` uses an outdated method for calculating the breaks. Experiment with different `breaks` and choose a "pleasing" one.
+
+```{r}
+hist(mtcars$mpg, xlab = "Miles per gallon", main = "Histogram of miles per gallon", col = "white", freq = FALSE, breaks = 10)
+```
+
+### Exercise
+Add a call to `rug` on `mtcars$mpg` below the histogram.
+
+```{r}
+hist(mtcars$mpg, xlab = "Miles per gallon", main = "Histogram of miles per gallon", col = "white", freq = FALSE, breaks = 10)
+rug(mtcars$mpg)
+```
+:::
+
+
+## Multiple plots
+
+:::{.panel-tabset}
+
+### Data
+We are sometimes interested in evaluating wether a dataset is approximately normal. We can do this visually (but unreliably!) by plotting a normal density curve on top of a histogram.
+
+```{r}
+mu <- mean(mtcars$mpg)
+sigma <- sd(mtcars$mpg)
+x <- seq(min(mtcars$mpg), max(mtcars$mpg), length.out = 100)
+x
+```
+
+### Plot
+```{r}
+plot(x, dnorm(x, mu, sigma), type = "l")
+```
+
+### Exercise
+Using `lines`, add the normal density plot to the histogram. Be sure to choose a nice color and line type (`lty`)!
+
+### Solution
+```{r}
+
+```
+
+### Exercise
+The Shapiro--Wilk test is among the most widely used tests of normality. Find the Shapiro--Wilk test in `R` and evaluate the normality of `mtcars$mpg` formally.
+
+### Solution
+```{r}
+
+```
+
+:::
+
+## Quantile-quantile plots
+
+::: {.panel-tabset}
+
+### Simple
+```{r}
+#| output-location: column
+qqnorm(mtcars$mpg)
+```
+
+### With line
+```{r}
+qqnorm(mtcars$mpg)
+qqline(mtcars$mpg)
+```
+
+### Exercise
+(i) Remove the title from the plot. (*Hint*: What is the `R` way of saying "nothing?") (ii) Change the "box" around the plot so it has lines emanating only from the lower-left corner.
+
+### Solution
+```{r}
+
+```
+
+:::
+
+# More plots
+
+## Plots side by side
+
+You put multiple plots in the same window using `par(mfrow())`
+
+```{r}
+#| output-location: column
+par(mfrow = c(2,2))
+hist(mtcars$mpg, xlab = "Miles per gallon", col = "white", main = NULL, freq = FALSE, breaks = 10)
+rug(mtcars$mpg)
+lines(x, dnorm(x, mu, sigma), lty = 3, col = "black", lwd = 2)
+qqnorm(mtcars$mpg, main = NULL, bty = "l")
+qqline(mtcars$mpg)
+boxplot(mtcars$mpg, xlab = "Miles per gallon")
+plot(mtcars$mpg, mtcars$disp, xlab = "Miles per gallon", ylab = "Displacement", pch = 20)
+```
+
+## `plot` is generic
+
+::: {.panel-tabset}
+
+### Generics
+The `plot` function is *generic*. It can be applied to many different objects, with sometimes unpredictable behaviour!
+
+### Data
+```{r}
+properties <- datarium::properties
+head(properties)
+```
+
+```{r}
+property_table <- table(properties$property_type, properties$buyer_type)
+property_table
+```
+
+### Plot
+```{r}
+plot(property_table)
+```
+To find the documentation of a generic, you must know the class of the object you use.
+
+```{r}
+class(property_table)
+```
+
+### Instances
+Instances of generic functions can be found by placing a `.` behind the generic method:
+
+```{r}
+#| eval: False
+?plot.table
+```
+
+### Exercise
+Call `plot(dnorm, -5, 5)`. What does the plot function do now? Find its documentation.
+
+### Solution
+```{r}
+
+```
+
+:::

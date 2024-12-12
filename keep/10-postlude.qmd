@@ -1,0 +1,66 @@
+---
+title: "10: Postludium"
+subtitle: "R for faculty, Fall 2024"
+author: "Jonas Moss"
+format:
+  revealjs:
+    error: True
+    theme: [default, custom.scss]
+    width: 1600
+    height: 900
+    embed-resources: True
+    mainfont: "Verdana"
+    #min-scale: 0.2
+    #max-scale: 2
+    echo: True
+    auto-stretch: False
+---
+
+# Summary
+
+* You probably want to gain some experience.
+  * Reproducing results from papers,
+  * Exercises from various books,
+  * Become proficient with your favoured modelling tools.
+  * Learn to use `ggplot`.
+
+## Hadley Wickham books
+
+Hadley Wickham has written several excellent books on `R`.
+
+::: {.panel-tabset}
+
+### [R for Data Science](http://r4ds.had.co.nz/)
+* Mostly about data wranging and visualization.
+* This course have focused much more on general programming.
+
+### [Advanced R](https://adv-r.hadley.nz/)
+* The best book for understanding R well. 
+* Ambitious read just after this course.
+* Recommended if you have prior experience with programming.
+
+### [R Packages](https://r-pkgs.org/)
+* This is mostly relevant if you need to develop your own packages.
+* Probably not very useful for most.
+
+## Quarto
+
+Quarto is very powerful, and can be used for
+
+* Papers,
+* Blogs,
+* Lecture notes,
+* Presentations, both for teaching and conferences.
+
+. . .
+
+* I've not written a paper in Quarto yet, but I have used it
+for the other purposes. 
+* Presentations are vastly simplified compared to PowerPoint or Latex.
+  * But still a lot of work.
+
+## Resources for Quarto
+
+* The communication chapter in [R for Data Science](https://r4ds.hadley.nz/communicate)
+* The [official documentation](https://quarto.org/). 
+
