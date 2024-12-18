@@ -1,0 +1,40 @@
+---
+format:
+  live-revealjs:
+    theme: default
+title: Example Slides
+webr:
+  cell-options:
+    autorun: true
+    fig-width: 11
+    fig-height: 5
+---
+
+{{< include ./_extensions/r-wasm/live/_knitr.qmd >}}
+
+## Editable examples
+
+```{webr}
+#| edit: false
+#| output: false
+#| define: 
+#|   - values
+#|   - lm_sum
+
+values <- colnames(mtcars)[-1]
+
+lm_sum <- \(vars) {
+  data <- mtcars[c("mpg", vars)]
+  print(summary(lm(mpg ~ ., data = data)))
+}
+
+```
+
+```{ojs}
+viewof val = Inputs.checkbox(values, {
+  label: "Var",
+  value: "wt"
+})
+lm_sum(val)
+```
+

@@ -375,9 +375,9 @@ Read the following statements and tick the box next to the correct answer. (Take
 
 ```{r}
 #| eval: False
-a <- 10;
-b <- 20;
-a <- b;
+a <- 10
+b <- 20
+a <- b
 ```
 
 What are the values of `a` and `b`?
@@ -500,7 +500,8 @@ Logicals are called `TRUE` (or `T`) and `FALSE` (or `F`). ***Don't*** use the sh
 Test for equality:
 
 ```{r}
-1 == 1
+print(1 == 1) 
+print(2 == 1)
 ```
 
 ::: {.panel-tabset}

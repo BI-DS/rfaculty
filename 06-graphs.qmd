@@ -479,7 +479,7 @@ plot(x = mtcars$mpg,
      cex = 1.6,
      pch = 20,
      bty = "l")
-grid()
+grid(lwd = 3, lty = 1, col = "black")
 ```
 
 ### Exercise
@@ -651,6 +651,8 @@ text(x = mtcars$mpg[c(14, 28)],
 ## Adding a scatterplot smoother
 
 ::: {.panel-tabset}
+
+### Loess
 The `loess` function estimates a scatterplot smoother.
 
 ```{r}

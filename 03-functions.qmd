@@ -3,7 +3,7 @@ title: "3: Functions"
 subtitle: "R for faculty, Fall 2024"
 author: "Jonas Moss"
 format:
-  revealjs:
+  live-revealjs:
     error: True
     theme: [default, custom.scss]
     width: 1600
@@ -15,6 +15,8 @@ format:
     echo: True
     auto-stretch: False
 ---
+
+{{< include ./_extensions/r-wasm/live/_knitr.qmd >}}
 
 # Functions
 
@@ -256,12 +258,8 @@ Using `for` loops, make a function `maxi` that returns the maximal value of a ve
 ### Solution
 ```{r}
 maxi <- \(x) {
-  current = 0
-  for (i in x) {
-    if (i > current) {
-      current = i
-    }
-  }
+  current = -Inf
+  for (i in x) if (i > current) current = i
   current
 }
 maxi(c(1,2,10,-1,0))
@@ -413,13 +411,33 @@ Figure out what the following the functions `rev(y)` and `sort(y)` do. How do yo
 
 ### Solution
 
-```{r}
-y=c(4,6,2,1)
-sort(y, decreasing = TRUE)
-rev(sort(y))
+```{webr}
 ```
 
 :::
+
+# More interactivity
+
+```{webr}
+viewof val = Inputs.radio(["pop", "gdp"], {
+  label: "Data to be displayed",
+  value: "pop"
+})
+viewof step = Inputs.range([10, 50], {
+  label: "step",
+  step: 1,
+  value: 15
+})
+viewof k = Inputs.range([5, 30], {
+  label: "Radius of the largest circle",
+  step: 1,
+  value: 15
+})
+viewof dorling = Inputs.toggle({ label: "Avoid overlap (dorling)" })
+
+
+```
+
 
 # More functions
 
